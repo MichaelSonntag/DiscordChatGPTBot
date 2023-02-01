@@ -1,6 +1,23 @@
 require('dotenv').config()
 const { Client, GatewayIntentBits } = require('discord.js');
 const { Configuration, OpenAIApi } = require("openai");
+const net = require('net');
+
+const server = net.createServer((socket) => {
+  console.log('client connected');
+  socket.on('data', (data) => {
+    console.log(data.toString());
+    socket.write('Pong');
+  });
+
+  socket.on('end', () => {
+    console.log('client disconnected');
+  });
+});
+
+server.listen(8080, () => {
+  console.log('server listening on port 8080');
+});
 
 const configuration = new Configuration({
     apiKey: process.env.OPEN_API_KEY,

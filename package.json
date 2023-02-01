@@ -4,7 +4,7 @@
   "description": "",
   "main": "script.js",
   "scripts": {
-    "start": "node script.js"
+    "start": "npm install && node script.js"
   },
   "author": "",
   "license": "ISC",
