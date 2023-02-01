@@ -31,8 +31,8 @@ jobs:
       - name: 'Create env file'
         run: |
           touch .env
-          echo OPEN_API_KEY=${{ secrets.prod.OPEN_API_KEY }} >> .env
-          echo DISCORD_TOKEN=${{ secrets.prod.DISCORD_TOKEN }} >> .env
+          echo OPEN_API_KEY=${{ secrets.OPEN_API_KEY }} >> .env
+          echo DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }} >> .env
           cat .env
 
       - name: 'Deploy to Azure Web App'
