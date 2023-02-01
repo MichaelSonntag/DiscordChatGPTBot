@@ -3,16 +3,11 @@ const { Client, GatewayIntentBits } = require('discord.js');
 const { Configuration, OpenAIApi } = require("openai");
 const net = require('net');
 
-const server = net.createServer((socket) => {
-  console.log('client connected');
-  socket.on('data', (data) => {
-    console.log(data.toString());
-    socket.write('Pong');
-  });
+const http = require('http');
 
-  socket.on('end', () => {
-    console.log('client disconnected');
-  });
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('OK');
 });
 
 server.listen(8080, () => {
