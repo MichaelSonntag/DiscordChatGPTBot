@@ -1,7 +1,7 @@
 require('dotenv').config()
-const { Client, GatewayIntentBits } = require('discord.js');
-const { Configuration, OpenAIApi } = require("openai");
-const net = require('net');
+const fs = require('node:fs');
+const path = require('node:path');
+const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
 
 const http = require('http');
 
@@ -14,12 +14,6 @@ server.listen(8080, () => {
   console.log('server listening on port 8080');
 });
 
-const configuration = new Configuration({
-    apiKey: process.env.OPEN_API_KEY,
-});
-
-const openai = new OpenAIApi(configuration);
-
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -29,26 +23,24 @@ const client = new Client({
     ],
 });
 
-const command = '!chatgpt';
 
-client.on('ready', () => {
-    console.log(`Logged in as ${client.user.tag}!`);
+client.once(Events.ClientReady, () => {
+	console.log('Ready!');
 });
 
-client.on('messageCreate', msg => {
-    console.log(msg.content);
-    if (msg.content.startsWith(command)) {
-        let payload = msg.content.substring(command.length).trim();
-        openai.createCompletion({
-            model: "text-davinci-003",
-            prompt: payload,
-            temperature: 0.7,
-            max_tokens: 256,
-        }).then(response => {
-            console.log(response.data.choices[0].text);
-            msg.reply(response.data.choices[0].text)
-        });
-    }
+client.on(Events.InteractionCreate, async interaction => {
+	if (!interaction.isChatInputCommand()) return;
+
+	const command = client.commands.get(interaction.commandName);
+
+	if (!command) return;
+
+	try {
+		await command.execute(interaction);
+	} catch (error) {
+		console.error(error);
+		await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+	}
 });
 
 client.login(process.env.DISCORD_TOKEN);
